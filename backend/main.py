@@ -14,10 +14,10 @@ import models
 # Load environment variables
 load_dotenv()
 
-origins = ["http://localhost:5173", 
-    "https://playalong-api.onrender.com",
-    "https://playalong-frontend.vercel.app",
-    "https://www.naturalsharp.net"
+origins = [
+    "http://localhost:5173",  # Local development
+    "https://www.naturalsharp.net",  # Production frontend
+    "https://playalong-frontend.vercel.app",  # Alternative frontend URL
 ]
 
 app = FastAPI(
@@ -33,8 +33,9 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"]
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allow_headers=["Content-Type", "Set-Cookie", "Access-Control-Allow-Headers", "Access-Control-Allow-Origin", "Authorization"],
+    expose_headers=["Set-Cookie"]
 )
 
 # Use SECRET_KEY from .env
