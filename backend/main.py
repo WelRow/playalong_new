@@ -14,7 +14,7 @@ import models
 # Load environment variables
 load_dotenv()
 
-origins = ["http://localhost:5173", "https://playalong-apii.onrender.com"]
+origins = ["http://localhost:5173", "https://playalong-api.onrender.com"]
 
 app = FastAPI(
     title="Music Playlist API",
