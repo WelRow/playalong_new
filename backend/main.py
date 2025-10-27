@@ -17,7 +17,7 @@ load_dotenv()
 origins = ["http://localhost:5173", 
     "https://playalong-api.onrender.com",
     "https://playalong-frontend.vercel.app",
-    "https://naturalsharp.net"
+    "https://www.naturalsharp.net"
 ]
 
 app = FastAPI(
