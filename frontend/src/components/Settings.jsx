@@ -25,12 +25,16 @@ function Settings({ onLogout }) {
 
   const fetchCurrentUser = async () => {
     try {
+      console.log('🔍 [Settings] Fetching current user...')
       const response = await api.get('/users/me')
       const currentUsername = response.data.username
       setUsername(currentUsername)
+      console.log('✅ [Settings] Username received:', currentUsername)
       
       // Fetch full user data
       const userResponse = await api.get(`/users/${currentUsername}`)
+      console.log('✅ [Settings] Full user data:', userResponse.data)
+      
       setFormData({
         ...formData,
         email: userResponse.data.email || '',
@@ -42,7 +46,42 @@ function Settings({ onLogout }) {
         setPreviewAvatar(userResponse.data.avatar)
       }
     } catch (err) {
-      console.error('Error fetching user:', err)
+      console.error('❌ [Settings] Error fetching user:', err)
+      console.error('❌ [Settings] Error details:', {
+        status: err.response?.status,
+        data: err.response?.data,
+        message: err.message
+      })
+      
+      // FALLBACK: Try to use localStorage username
+      const storedUsername = localStorage.getItem('username')
+      if (storedUsername) {
+        console.log('🔄 [Settings] Using stored username as fallback:', storedUsername)
+        setUsername(storedUsername)
+        
+        try {
+          // Try to fetch user data directly with stored username
+          const userResponse = await api.get(`/users/${storedUsername}`)
+          console.log('✅ [Settings] Fetched user data with stored username:', userResponse.data)
+          
+          setFormData({
+            ...formData,
+            email: userResponse.data.email || '',
+            avatar: userResponse.data.avatar || ''
+          })
+          
+          // Set avatar preview if exists
+          if (userResponse.data.avatar) {
+            setPreviewAvatar(userResponse.data.avatar)
+          }
+        } catch (fallbackErr) {
+          console.error('❌ [Settings] Fallback also failed:', fallbackErr)
+          // Set basic username at minimum
+          setUsername(storedUsername)
+        }
+      } else {
+        console.error('❌ [Settings] No stored username found - user needs to re-login')
+      }
     }
   }
 
@@ -115,6 +154,12 @@ function Settings({ onLogout }) {
       await api.put(`/users/${username}`, updateData)
 
       setSuccess('Settings updated successfully!')
+      
+      // If avatar was updated, cache it in localStorage
+      if (updateData.avatar) {
+        localStorage.setItem('userAvatar', updateData.avatar)
+        console.log('💾 Updated avatar cached in localStorage')
+      }
       
       // Clear password fields
       setFormData({

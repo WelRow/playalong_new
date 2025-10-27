@@ -23,11 +23,15 @@ function Profile({ onLogout }) {
 
   const fetchCurrentUser = async () => {
     try {
+      console.log('🔍 [Profile] Fetching current user...')
       const response = await api.get('/users/me')
       const currentUsername = response.data.username
+      console.log('✅ [Profile] User data received:', currentUsername)
       
       // Fetch full user data
       const userResponse = await api.get(`/users/${currentUsername}`)
+      console.log('✅ [Profile] Full user data:', userResponse.data)
+      
       setUserInfo({
         username: currentUsername,
         avatar: userResponse.data.avatar,
@@ -39,7 +43,46 @@ function Profile({ onLogout }) {
       await fetchUserPlaylists(currentUsername)
       await fetchLikedPlaylists(currentUsername)
     } catch (err) {
-      console.error('Error fetching user:', err)
+      console.error('❌ [Profile] Error fetching user:', err)
+      console.error('❌ [Profile] Error details:', {
+        status: err.response?.status,
+        data: err.response?.data,
+        message: err.message
+      })
+      
+      // FALLBACK: Try to use localStorage username
+      const storedUsername = localStorage.getItem('username')
+      if (storedUsername) {
+        console.log('🔄 [Profile] Using stored username as fallback:', storedUsername)
+        
+        try {
+          // Try to fetch user data directly with stored username
+          const userResponse = await api.get(`/users/${storedUsername}`)
+          console.log('✅ [Profile] Fetched user data with stored username:', userResponse.data)
+          
+          setUserInfo({
+            username: storedUsername,
+            avatar: userResponse.data.avatar,
+            email: userResponse.data.email || '',
+            playlistCount: userResponse.data.playlist_count || 0
+          })
+          
+          // Fetch user's playlists
+          await fetchUserPlaylists(storedUsername)
+          await fetchLikedPlaylists(storedUsername)
+        } catch (fallbackErr) {
+          console.error('❌ [Profile] Fallback also failed:', fallbackErr)
+          // Set basic user info at minimum
+          setUserInfo({
+            username: storedUsername,
+            avatar: null,
+            email: '',
+            playlistCount: 0
+          })
+        }
+      } else {
+        console.error('❌ [Profile] No stored username found - user needs to re-login')
+      }
     } finally {
       setLoading(false)
     }

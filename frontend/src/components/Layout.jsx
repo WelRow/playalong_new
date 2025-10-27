@@ -41,7 +41,14 @@ function Layout({ children, activePage, onLogout }) {
       
       // Fetch avatar
       const userResponse = await api.get(`/users/${currentUsername}`)
-      setAvatar(userResponse.data.avatar)
+      const userAvatar = userResponse.data.avatar
+      setAvatar(userAvatar)
+      
+      // Cache avatar in localStorage for mobile fallback
+      if (userAvatar) {
+        localStorage.setItem('userAvatar', userAvatar)
+        console.log('💾 Avatar cached in localStorage')
+      }
       
       console.log('✅ Username set to:', currentUsername)
     } catch (err) {
@@ -54,9 +61,16 @@ function Layout({ children, activePage, onLogout }) {
       
       // On mobile, if session fails, try to get username from localStorage as fallback
       const storedUsername = localStorage.getItem('username')
+      const storedAvatar = localStorage.getItem('userAvatar')
+      
       if (storedUsername) {
         console.log('🔄 Using stored username as fallback:', storedUsername)
         setUsername(storedUsername)
+      }
+      
+      if (storedAvatar) {
+        console.log('🔄 Using stored avatar as fallback')
+        setAvatar(storedAvatar)
       }
     } finally {
       setLoading(false)
@@ -66,7 +80,8 @@ function Layout({ children, activePage, onLogout }) {
   const handleLogout = () => {
     // Clear localStorage fallback
     localStorage.removeItem('username')
-    console.log('🗑️ Cleared username from localStorage')
+    localStorage.removeItem('userAvatar')
+    console.log('🗑️ Cleared username and avatar from localStorage')
     
     // Call parent logout handler
     if (onLogout) {
