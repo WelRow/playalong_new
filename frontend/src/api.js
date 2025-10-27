@@ -1,10 +1,11 @@
-import axios from 'axios';
+import axios from 'axios'
 
-// Create an instance of axios with the base URL
 const api = axios.create({
-  baseURL: "http://localhost:8000",
-  withCredentials: true  // Important for session cookies
-});
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
+  withCredentials: true,
+  headers: {
+      'Content-Type': 'application/json'
+  }
+})
 
-// Export the Axios instance
-export default api;
+export default api
