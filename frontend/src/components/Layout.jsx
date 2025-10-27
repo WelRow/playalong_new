@@ -4,14 +4,38 @@ import api from '../api'
 import './Layout.css'
 
 function Layout({ children, activePage, onLogout }) {
-  const [username, setUsername] = useState('User')
-  const [avatar, setAvatar] = useState(null)
+  // Initialize with cached data from localStorage
+  const [username, setUsername] = useState(() => {
+    const cached = localStorage.getItem('username')
+    return cached || 'User'
+  })
+  const [avatar, setAvatar] = useState(() => {
+    const cached = localStorage.getItem('userAvatar')
+    return cached || null
+  })
   const [loading, setLoading] = useState(true)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
 
   useEffect(() => {
+    // Load cached data first for immediate display
+    loadCachedUserData()
+    // Then fetch fresh data from server
     fetchCurrentUser()
   }, [])
+
+  const loadCachedUserData = () => {
+    const cachedUserData = localStorage.getItem('userData')
+    if (cachedUserData) {
+      try {
+        const userData = JSON.parse(cachedUserData)
+        console.log('🔄 [Layout] Loading cached user data:', userData)
+        if (userData.username) setUsername(userData.username)
+        if (userData.avatar) setAvatar(userData.avatar)
+      } catch (err) {
+        console.error('❌ Failed to parse cached user data:', err)
+      }
+    }
+  }
 
   // Listen for authentication changes (when user logs in)
   useEffect(() => {
@@ -60,11 +84,15 @@ function Layout({ children, activePage, onLogout }) {
       const userAvatar = userResponse.data.avatar
       setAvatar(userAvatar)
       
-      // Cache avatar in localStorage for mobile fallback
-      if (userAvatar) {
-        localStorage.setItem('userAvatar', userAvatar)
-        console.log('💾 Avatar cached in localStorage')
+      // Cache complete user data in localStorage for mobile fallback
+      const userData = {
+        username: currentUsername,
+        email: userResponse.data.email,
+        avatar: userAvatar
       }
+      localStorage.setItem('userAvatar', userAvatar || '')
+      localStorage.setItem('userData', JSON.stringify(userData))
+      console.log('💾 Complete user data cached in localStorage')
       
       console.log('✅ Username set to:', currentUsername)
     } catch (err) {
@@ -94,10 +122,11 @@ function Layout({ children, activePage, onLogout }) {
   }
 
   const handleLogout = () => {
-    // Clear localStorage fallback
+    // Clear all localStorage data
     localStorage.removeItem('username')
     localStorage.removeItem('userAvatar')
-    console.log('🗑️ Cleared username and avatar from localStorage')
+    localStorage.removeItem('userData')
+    console.log('🗑️ Cleared all user data from localStorage')
     
     // Call parent logout handler
     if (onLogout) {

@@ -30,11 +30,26 @@ function Auth({ onLogin }) {
       const endpoint = isLogin ? '/auth/login' : '/auth/register'
       const response = await api.post(endpoint, formData)
       
-      console.log('Success:', response.data)
+      console.log('✅ Auth Success:', response.data)
       
-      // Store username in localStorage as fallback for mobile session issues
-      localStorage.setItem('username', formData.username)
-      console.log('💾 Username stored in localStorage:', formData.username)
+      // Store user data in localStorage for mobile session fallback
+      if (response.data.username) {
+        localStorage.setItem('username', response.data.username)
+        console.log('💾 Username stored in localStorage:', response.data.username)
+      }
+      
+      if (response.data.avatar) {
+        localStorage.setItem('userAvatar', response.data.avatar)
+        console.log('💾 Avatar stored in localStorage:', response.data.avatar)
+      }
+      
+      // Also store complete user data for immediate access
+      localStorage.setItem('userData', JSON.stringify({
+        username: response.data.username,
+        email: response.data.email,
+        avatar: response.data.avatar
+      }))
+      console.log('💾 Complete user data cached in localStorage')
       
       // Call onLogin to update authentication state
       onLogin()

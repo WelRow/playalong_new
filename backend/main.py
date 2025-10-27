@@ -105,7 +105,17 @@ async def login(request: Request, user_login: UserLogin, db: Session = Depends(g
     request.session["user_id"] = user.id
     request.session["username"] = user.username
     
-    return {"message": f"Welcome {user.username}", "user_id": user.id}
+    print(f"✅ LOGIN SUCCESS: Session created for {user.username} (ID: {user.id})")
+    print(f"📝 Session data: {dict(request.session)}")
+    
+    # Return user data immediately to avoid additional API calls on mobile
+    return {
+        "message": f"Welcome {user.username}", 
+        "user_id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "avatar": user.avatar
+    }
 
 
 @app.post("/auth/logout")
@@ -146,10 +156,15 @@ async def register(request: Request, user_register: UserLogin, db: Session = Dep
     request.session["username"] = new_user.username
 
     print(f"✅ NEW USER CREATED: {new_user.username} (ID: {new_user.id})")
+    print(f"📝 Session data: {dict(request.session)}")
 
+    # Return user data immediately to avoid additional API calls on mobile
     return {
         "message": f"User {new_user.username} created and logged in",
-        "user_id": new_user.id
+        "user_id": new_user.id,
+        "username": new_user.username,
+        "email": new_user.email,
+        "avatar": new_user.avatar
     }
 
 
