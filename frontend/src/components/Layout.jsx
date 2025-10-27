@@ -28,6 +28,22 @@ function Layout({ children, activePage, onLogout }) {
     }
   }, [refreshTrigger])
 
+  // Additional mobile refresh: try to refresh when component mounts and no avatar
+  useEffect(() => {
+    if (!avatar && username && username !== 'User') {
+      console.log('🔄 [Layout] No avatar found, attempting refresh for:', username)
+      // Try to get avatar from localStorage first
+      const storedAvatar = localStorage.getItem('userAvatar')
+      if (storedAvatar) {
+        console.log('🔄 [Layout] Found stored avatar, setting it')
+        setAvatar(storedAvatar)
+      } else {
+        // If no stored avatar, try to refresh
+        fetchCurrentUser()
+      }
+    }
+  }, [avatar, username])
+
   const fetchCurrentUser = async () => {
     try {
       setLoading(true)
@@ -93,6 +109,12 @@ function Layout({ children, activePage, onLogout }) {
     console.log('🔄 Manual refresh triggered')
     setRefreshTrigger(prev => prev + 1)
   }
+
+  // Debug logging for mobile avatar issues
+  useEffect(() => {
+    console.log('🔍 [Layout] State values:', { username, avatar, activePage })
+    console.log('🔍 [Layout] Avatar type:', typeof avatar, 'Value:', avatar)
+  }, [username, avatar, activePage])
 
   return (
     <div className="layout-container">

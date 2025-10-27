@@ -12,6 +12,30 @@ function Header({ username, avatar, onLogout, activePage, onRefresh }) {
   const searchRef = useRef(null)
   const dropdownRef = useRef(null)
 
+  // Debug logging for mobile avatar issues
+  useEffect(() => {
+    console.log('🔍 [Header] Props received:', { username, avatar, activePage })
+    console.log('🔍 [Header] Avatar type:', typeof avatar, 'Value:', avatar)
+  }, [username, avatar, activePage])
+
+  // Fallback: Try to get avatar from localStorage if not provided
+  const [fallbackAvatar, setFallbackAvatar] = useState(null)
+  
+  useEffect(() => {
+    if (!avatar) {
+      const storedAvatar = localStorage.getItem('userAvatar')
+      if (storedAvatar) {
+        console.log('🔄 [Header] Using stored avatar as fallback:', storedAvatar)
+        setFallbackAvatar(storedAvatar)
+      }
+    } else {
+      setFallbackAvatar(null) // Clear fallback if avatar is provided
+    }
+  }, [avatar])
+
+  // Use fallback avatar if main avatar is not available
+  const displayAvatar = avatar || fallbackAvatar
+
   // Close suggestions and dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -156,10 +180,17 @@ function Header({ username, avatar, onLogout, activePage, onRefresh }) {
           <div className="avatar-dropdown-container" ref={dropdownRef}>
             <div 
               className="header-avatar"
-              onClick={() => setShowDropdown(!showDropdown)}
-              style={avatar ? { backgroundImage: `url(${avatar})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
+              onClick={() => {
+                setShowDropdown(!showDropdown)
+                // On mobile, try to refresh user data when avatar is clicked
+                if (onRefresh && !displayAvatar) {
+                  console.log('🔄 [Header] Avatar clicked - triggering refresh')
+                  onRefresh()
+                }
+              }}
+              style={displayAvatar ? { backgroundImage: `url(${displayAvatar})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
             >
-              {!avatar && <span className="avatar-placeholder">{username?.charAt(0).toUpperCase() || 'U'}</span>}
+              {!displayAvatar && <span className="avatar-placeholder">{username?.charAt(0).toUpperCase() || 'U'}</span>}
             </div>
             
             {/* Dropdown Menu */}
