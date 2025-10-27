@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import './Header.css'
 import api from '../api'
 
@@ -139,9 +139,9 @@ function Header({ username, avatar, onLogout, activePage }) {
       {/* Right Side: Home | Users | Username | Avatar */}
       <div className="header-right">
         <nav className="nav-bar">
-          <a href="/home" className={`nav-link ${activePage === 'home' ? 'active' : ''}`}>Home</a>
+          <Link to="/home" className={`nav-link ${activePage === 'home' ? 'active' : ''}`}>Home</Link>
           <span className="nav-divider">|</span>
-          <a href="/users" className={`nav-link ${activePage === 'users' ? 'active' : ''}`}>Users</a>
+          <Link to="/users" className={`nav-link ${activePage === 'users' ? 'active' : ''}`}>Users</Link>
           <span className="nav-divider">|</span>
           <span className="nav-username">{username || 'User'}</span>
           <span className="nav-divider">|</span>

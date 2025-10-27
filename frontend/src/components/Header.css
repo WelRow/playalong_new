@@ -157,7 +157,13 @@
   font-size: 0.95rem;
   font-weight: 400;
   transition: opacity 0.2s;
-  padding: 0 0.25rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  display: inline-block;
+  min-height: 44px; /* iOS minimum touch target */
+  display: flex;
+  align-items: center;
+  -webkit-tap-highlight-color: transparent; /* Remove mobile tap highlight */
 }
 
 .nav-link:hover {
@@ -197,6 +203,9 @@
   align-items: center;
   justify-content: center;
   border: 2px solid transparent;
+  -webkit-tap-highlight-color: transparent; /* Remove mobile tap highlight */
+  min-height: 44px; /* iOS minimum touch target */
+  min-width: 44px;
 }
 
 .header-avatar:hover {
