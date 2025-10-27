@@ -1,0 +1,123 @@
+.search-results-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  margin: 0;
+  font-weight: 700;
+  color: white;
+}
+
+.loading-text {
+  color: #888;
+  font-size: 1.1rem;
+  margin: 2rem 0;
+  text-align: center;
+}
+
+/* Results Grid */
+.results-grid {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.playlist-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.playlist-card:hover .playlist-image {
+  transform: scale(1.02);
+}
+
+.playlist-image {
+  width: 200px;
+  height: 200px;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+  background-color: #3a3a3a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #a855f7 0%, #3b82f6 100%);
+}
+
+.playlist-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.playlist-name {
+  font-size: 1rem;
+  margin: 0;
+  color: white;
+  text-align: center;
+  font-weight: 600;
+}
+
+.playlist-owner {
+  font-size: 0.85rem;
+  margin: 0;
+  color: #aaa;
+  text-align: center;
+}
+
+/* No Results State */
+.no-results {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  gap: 1rem;
+  background-color: #3a3a3a;
+  border-radius: 12px;
+  margin-top: 2rem;
+}
+
+.no-results svg {
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.no-results h3 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: white;
+  font-weight: 600;
+}
+
+.no-results p {
+  font-size: 1rem;
+  color: #888;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .results-grid {
+    justify-content: center;
+  }
+
+  .playlist-image {
+    width: 150px;
+    height: 150px;
+  }
+}
+
