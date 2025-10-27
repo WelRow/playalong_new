@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import './Header.css'
 import api from '../api'
 
-function Header({ username, avatar, onLogout, activePage }) {
+function Header({ username, avatar, onLogout, activePage, onRefresh }) {
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [suggestions, setSuggestions] = useState([])
@@ -84,7 +84,13 @@ function Header({ username, avatar, onLogout, activePage }) {
           src="/playalong logo (2).png" 
           alt="PlayAlong Logo" 
           className="header-logo"
-          onClick={() => navigate('/home')}
+          onClick={() => {
+            navigate('/home')
+            // Trigger refresh on mobile to ensure username is loaded
+            if (onRefresh) {
+              onRefresh()
+            }
+          }}
         />
       </div>
       

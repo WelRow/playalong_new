@@ -32,6 +32,10 @@ function Auth({ onLogin }) {
       
       console.log('Success:', response.data)
       
+      // Store username in localStorage as fallback for mobile session issues
+      localStorage.setItem('username', formData.username)
+      console.log('💾 Username stored in localStorage:', formData.username)
+      
       // Call onLogin to update authentication state
       onLogin()
       
