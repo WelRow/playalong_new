@@ -41,7 +41,11 @@ app.add_middleware(
 # Use SECRET_KEY from .env
 app.add_middleware(
     SessionMiddleware,
-    secret_key=os.getenv("SECRET_KEY", "YOUR_32_BYTE_RANDOM_SECRET_KEY_GOES_HERE")
+    secret_key=os.getenv("SECRET_KEY", "YOUR_32_BYTE_RANDOM_SECRET_KEY_GOES_HERE"),
+    session_cookie="session",
+    max_age=14 * 24 * 60 * 60,  # 14 days
+    same_site="none",  # Required for cross-origin requests
+    https_only=True  # Required when using SameSite=None
 )
 
 
